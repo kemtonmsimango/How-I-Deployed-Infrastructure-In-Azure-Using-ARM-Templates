@@ -34,44 +34,162 @@ The following diagram shows the architecture used in this deployment.
   <img src="images/AZ104 - Diagram.drawio.png" width="750">
 </p>
 
-Example:
-
 How I Deployed the Infrastructure
 
-The deployment followed these steps.
+To deploy the infrastructure, I used the Azure CLI together with Bicep templates.
 
-1️⃣ Define Infrastructure Using Bicep
+Using the Azure CLI allowed me to:
 
-✅ Wrote Bicep templates to define Azure resources
-✅ Structured the templates to represent the required infrastructure components
-✅ Used Infrastructure as Code to avoid manual configuration
+✅ Deploy resources in bulk
+✅ Automate the deployment process
+✅ Reduce the risk of manual configuration errors
+✅ Deploy infrastructure using Infrastructure as Code (IaC)
 
-Bicep provides a cleaner syntax while still compiling into ARM templates for Azure Resource Manager deployments.
+Instead of manually provisioning resources in the Azure Portal, I defined the infrastructure in Bicep, which compiles into ARM templates that Azure Resource Manager uses to deploy resources.
 
-2️⃣ Organize Infrastructure Code
+# Step 1 — Define the Infrastructure Requirements
 
-To improve maintainability, the infrastructure code was separated into logical components.
+Before writing any code, I first defined the infrastructure components required for the deployment.
 
-Example components included:
+This project simulates a scenario where a financial institution needs scalable cloud infrastructure to support a new digital banking feature.
 
-✅ Networking configuration
-✅ Storage resources
-✅ Load balancing configuration
+Based on this requirement, the infrastructure needed to include the following Azure resources:
 
-This modular approach makes infrastructure easier to manage and update.
+✅ Virtual Network for secure communication between services
 
-3️⃣ Compile Bicep to ARM Templates
+✅ Load Balancer to distribute application traffic
 
-During deployment, Bicep templates are compiled into ARM templates.
+✅ Storage Accounts for application data
 
-✅ Bicep simplifies template development
-✅ Azure Resource Manager processes the compiled templates
-✅ Resources are provisioned automatically
+✅ Supporting Azure infrastructure components
 
-Architecture Design
+Once the infrastructure requirements were defined, I began writing the Bicep template that describes the entire environment.
 
-The following diagram shows the architecture used for this deployment.
+# Step 2 — Define Infrastructure Using Bicep
 
-(Insert architecture diagram here)
+After defining the required infrastructure components, I created a Bicep template to describe the Azure resources.
 
-Example:
+Bicep provides a simplified syntax for defining Azure infrastructure, while still compiling into ARM templates, which Azure Resource Manager uses for deployments.
+
+In my main.bicep template, I defined the resources required for the environment including:
+
+✅ Virtual network configuration
+
+✅ Storage accounts
+
+✅ Load balancing resources
+
+✅ Supporting Azure infrastructure components
+
+By defining these resources in code, the infrastructure can be version controlled and redeployed consistently across environments.
+
+# Step 3 — Authenticate with Azure
+
+Once the infrastructure template was ready, I authenticated with Azure using the Azure CLI.
+
+This allows the CLI to interact with Azure Resource Manager and execute deployment commands.
+
+az login
+
+After logging in, I verified the active subscription.
+
+az account show
+
+If multiple subscriptions were available, I selected the correct one.
+
+az account set --subscription "SUBSCRIPTION_ID"
+
+This ensures that the deployment is executed within the correct Azure environment.
+
+
+
+# Step 4 — Create the Resource Group
+
+Next, I created a resource group that would contain all resources associated with the deployment.
+
+Resource groups allow Azure resources to be logically grouped and managed together.
+
+az group create \
+--name capitec-banking-rg \
+--location southafricanorth
+
+This resource group acts as the container where the infrastructure will be deployed.
+
+
+
+# Step 5 — Compile the Bicep Template
+
+Bicep templates are compiled into ARM templates before deployment.
+
+Although Azure performs this step automatically during deployment, the template can also be compiled manually.
+
+az bicep build --file main.bicep
+
+This command converts the Bicep file into the equivalent ARM template JSON file used by Azure Resource Manager.
+
+
+
+# Step 6 — Deploy the Infrastructure
+
+Once the template was ready, I deployed the infrastructure using the Azure CLI.
+
+az deployment group create \
+--resource-group capitec-banking-rg \
+--template-file main.bicep
+
+During this step, Azure Resource Manager processes the compiled ARM template and provisions the infrastructure automatically.
+
+Azure Resource Manager ensures that:
+
+
+✅ Resources are deployed in the correct order
+
+✅ Dependencies between resources are resolved automatically
+
+✅ Infrastructure is deployed consistently
+
+This allows complex infrastructure environments to be deployed reliably using code.
+
+
+
+# Step 7 — Verify the Deployment
+
+After the deployment completed successfully, I verified that the infrastructure resources were created.
+
+az resource list \
+--resource-group capitec-banking-rg \
+--output table
+
+This command lists all resources within the resource group and confirms that the infrastructure was successfully deployed.
+
+# Why I Used Azure CLI for Deployment
+
+In this project, I intentionally used the Azure CLI instead of manually deploying resources through the Azure Portal.
+
+Manual deployments can introduce inconsistencies and configuration drift between environments.
+
+Using Bicep templates and the Azure CLI allows infrastructure to be deployed in a way that is:
+
+✅ Repeatable
+
+✅ Automated
+
+✅ Scalable
+
+✅ Consistent across environments
+
+This approach reflects modern cloud engineering and DevOps practices, where infrastructure is managed using code rather than manual configuration.
+
+Key Takeaways
+
+Through this project, I demonstrated the following cloud engineering practices.
+
+✅ Deploying Azure infrastructure using Infrastructure as Code
+
+✅ Writing Bicep templates that compile into ARM templates
+
+✅ Automating infrastructure deployment using the Azure CLI
+
+✅ Structuring infrastructure for scalable and repeatable deployments
+
+✅ Simulating a real world financial services cloud deployment scenario
